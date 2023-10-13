@@ -132,11 +132,38 @@ order by emp_name desc;
 
 ------------(Group by  with having)------
 
-select emp_name,avg(age>30)
-from TB_EMPLOYEE
-group by emp_name
+alter table tb_employee
+add emp_salary int;
+
+update TB_EMPLOYEE
+set emp_salary=30000
+where emp_id in(1,3,5)
+
+update TB_EMPLOYEE
+SET 
 
 
+
+
+-------Key in Database-----------
+
+--Primary key
+--Foreign key
+--candidate key
+--super key
+--unique key
+--alternative key
+--Composite key
+select * from tb_employee
+
+create table tb_Management(
+mng_id int identity(1,1) primary key,
+mng_name varchar(50),
+mng_address varchar(50),
+mng_phoneNo bigint,
+emp_id int,
+foreign key (emp_id) references tb_employee (emp_id)
+)
 
 
 
