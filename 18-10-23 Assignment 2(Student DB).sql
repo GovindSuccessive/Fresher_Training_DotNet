@@ -53,7 +53,7 @@ foreign key (CourseID) references tbl_Courses(Pk_Course_Id)
      select distinct c.CourseName
 	 from tbl_Courses as c 
 	 inner join tbl_Enrollments as e on c.Pk_Course_Id=e.CourseID
-	 where e.EnrollmentDate>c.Course_Starting_Date
+	 where e.EnrollmentDate<c.Course_Starting_Date
 
 
 --Q3. Find the students who are enrolled in courses from more than one department.
@@ -101,12 +101,16 @@ order by DepartmentID asc
 
 --Q7 Find the department with the highest average number of students enrolled per course.
 
-select  top 1 d.Dept_Name,count(e.CourseID) as Student_count
-from tbl_Enrollments as e
-inner join tbl_Courses as c on e.CourseID=c.Pk_Course_Id
-inner join tbl_Departments as d on d.Pk_DepartmentID= c.DepartmentID
-group by d.Dept_Name
-order by Student_count desc
+SELECT  d.Dept_Name, AVG(Student_count) AS Avg_Students_Per_Course
+FROM (
+    SELECT c.DepartmentID, COUNT(e.CourseID) AS Student_count
+    FROM tbl_Enrollments AS e
+    INNER JOIN tbl_Courses AS c ON e.CourseID = c.Pk_Course_Id
+    GROUP BY c.DepartmentID, e.CourseID
+) AS subquery
+INNER JOIN tbl_Departments AS d ON d.Pk_DepartmentID = subquery.DepartmentID
+GROUP BY d.Dept_Name,d.Pk_DepartmentID
+ORDER BY Avg_Students_Per_Course DESC
 
 
 --Q8.Retrieve the students who have not enrolled in any courses offered by the "back-end" department.
@@ -133,7 +137,22 @@ group by D.Dept_Name,c.CourseName
 order by d.Dept_Name
 
 
---Q10. Calculate the total number of students in the "Engineering" department who have enrolled in more courses than the average number of courses per student in that department.
+--Q10. Calculate the total number of students in the "front-end" department who have enrolled in more courses than the average number of courses per student in that department.
+
+
+SELECT  d.Dept_Name, AVG(Student_count) AS Avg_Students_Per_Course
+FROM (
+    SELECT c.DepartmentID, COUNT(e.CourseID) AS Student_count
+    FROM tbl_Enrollments AS e
+    INNER JOIN tbl_Courses AS c ON e.CourseID = c.Pk_Course_Id
+    GROUP BY c.DepartmentID, e.CourseID
+) AS subquery
+INNER JOIN tbl_Departments AS d ON d.Pk_DepartmentID = subquery.DepartmentID
+where d.Dept_Name='front-end'
+GROUP BY d.Dept_Name,d.Pk_DepartmentID
+ORDER BY Avg_Students_Per_Course DESC
+
+
 
 
 
